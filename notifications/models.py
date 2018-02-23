@@ -266,6 +266,8 @@ def notify_handler(verb, **kwargs):
     description = kwargs.pop('description', None)
     timestamp = kwargs.pop('timestamp', timezone.now())
     level = kwargs.pop('level', Notification.LEVELS.info)
+    emailed = True if kwargs.pop('email', None) else False
+
 
     # Check if User or Group
     if isinstance(recipient, Group):
@@ -278,6 +280,7 @@ def notify_handler(verb, **kwargs):
     new_notifications = []
 
     for recipient in recipients:
+
         newnotify = Notification(
             recipient=recipient,
             actor_content_type=ContentType.objects.get_for_model(actor),
@@ -287,6 +290,7 @@ def notify_handler(verb, **kwargs):
             description=description,
             timestamp=timestamp,
             level=level,
+            emailed=emailed,
         )
 
         # Set optional objects
@@ -302,6 +306,9 @@ def notify_handler(verb, **kwargs):
         newnotify.save()
         new_notifications.append(newnotify)
 
+        # if emailed defined, then send email to user
+        if emailed:
+            recipient.email_user(verb, description, from_email=settings.SERVER_EMAIL)
     return new_notifications
 
 

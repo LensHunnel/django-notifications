@@ -10,4 +10,5 @@ class NotificationAdmin(admin.ModelAdmin):
                     'level', 'target', 'unread', 'public')
     list_filter = ('level', 'unread', 'public', 'timestamp', )
 
+
 admin.site.register(Notification, NotificationAdmin)

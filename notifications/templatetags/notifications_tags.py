@@ -79,6 +79,6 @@ def user_context(context):
 
     request = context['request']
     user = request.user
-    if user.is_anonymous():
+    if not user.is_authenticated:
         return None
     return user
